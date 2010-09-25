@@ -31,9 +31,18 @@ class LxbusRequestNewHandler(webapp.RequestHandler):
         
         success = lxbus.getNewBus(stopcode)
         
-        if success:
+        if success != None:
             self.response.set_status(202)
-            self.response.out.write("Request OK. Try updating.")
+            
+            json = simplejson.dumps([{
+            "statuscode" : 1,
+            "requestid": success
+            }], sort_keys=True, indent=4) # Pretty print
+
+            self.response.set_status(202)
+            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            self.response.out.write(json)
+            
         else:
             self.response.set_status(500)
             self.response.out.write("An error ocurred. Try later.")
@@ -48,13 +57,14 @@ class LxbusRequestUpdateHandler(webapp.RequestHandler):
     def get(self):
 
         stopcode = self.request.get("stopcode")
+        requestid = self.request.get("requestid")
         
-        if stopcode == "":
+        if (stopcode == "") or (requestid == ""):
             self.response.set_status(400)
             self.response.out.write("Bad request. Check specs.")
             return False
         
-        entries = lxbus.getUpdateBus(stopcode)
+        entries = lxbus.getUpdateBus(stopcode, requestid)
         
         json = simplejson.dumps([{
             "busnr" : bus.busNumber,
@@ -78,6 +88,11 @@ class LxbusMailHandler(InboundMailHandler):
         html_bodies = mail_message.bodies('text/html')
 
         for content_type, body in html_bodies:
-            lxbus.parseCarrisMail(stopcode, body.decode())
+            requestid = lxbus.extractRequestid(body.decode())
+            
+            if requestid == None:
+                logging.warning("Could not extract request id. %s" % body.decode());
+            
+            lxbus.parseCarrisMail(stopcode, requestid, body.decode())
 
 

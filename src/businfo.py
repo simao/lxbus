@@ -16,3 +16,4 @@ class BusInfo(db.Model):
     eta_minutes = db.IntegerProperty(required=True)
     last_modified = db.DateTimeProperty(auto_now=True)
     dest = db.StringProperty(required=True)
+
