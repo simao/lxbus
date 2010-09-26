@@ -21,16 +21,12 @@ CARRIS_SUBJECT_SPEC = "C "
 
 '''
 Regular expression used to parse received bus info
+
+Should change this to use beatifull soap
 '''
 CARRIS_REGEX=r'<th>(\d+)</th><th>([\s\w\.\-]+)</th><th>(\d+:\d+)</th><th>(\d+m)</th>'
 
-LXBUS_REQ_PREFIX = r"LXBUS_RQID_PREFIX_"
-LXBUS_REQ_SUFFIX = r" _LXBUS_RQID_SUFFIX"
-LXBUS_REQ_REGEX = re.compile(LXBUS_REQ_PREFIX + r'(?P<requestid>\w+)' + "_LXBUS_RQID_SUFFIX", re.UNICODE | re.MULTILINE)
-
-
-
-def parseCarrisMail(stopcode, requestid, mailbody):
+def parseCarrisMail(stopcode, mailbody):
     '''
     Given a mail body received in an email from carris,
     search in the html for bus information
@@ -39,7 +35,9 @@ def parseCarrisMail(stopcode, requestid, mailbody):
     matches = pattern.finditer(mailbody)
     
     # Delete all previous information about this stopcode
-    BusInfo.all().filter("stopcode = ", stopcode).delete()
+    for b in BusInfo.all().filter("stopcode = ", stopcode):
+        b.delete()
+    
     
     res = []
         
@@ -53,8 +51,7 @@ def parseCarrisMail(stopcode, requestid, mailbody):
                          busNumber=busnr,
                          pt_timestamp=pt_timestamp,
                          eta_minutes=eta_minutes,
-                         dest=dest,
-                         requestid=requestid)
+                         dest=dest)
         
         newbus.put()
         
@@ -74,6 +71,10 @@ def getNewBus(stopcode):
     
     requestid = genRequestId(stopcode)
     
+    nrequest = BusRequest(requestid=requestid)
+    
+    nrequest.put()
+    
     message.body= requestid
 
     try:
@@ -90,12 +91,12 @@ def getUpdateBus(stopcode, requestid):
     Checks the database to see if there's information about a specific bus stop
     '''
     
-    request = BusRequest().all().filter("requestid = ", requestid)
+    request = BusRequest.all().filter("requestid = ", requestid).get()
     
     if(request == None):
         return None
     
-    entries = BusInfo.all().filter("stopcode = ", stopcode).filter("requestid = ", requestid).filter("last_modified > ", request.last_modified)
+    entries = BusInfo.all().filter("stopcode = ", stopcode).filter("last_modified > ", request.last_modified)
     
     return entries
 
@@ -123,26 +124,4 @@ def genRequestId(stopcode):
     m.update(stopcode + str(time.time()) + str(random.random()))
 
     return m.hexdigest()
-    
-def genRequestText(requestid):
-    '''
-    Given a request id, build a string representing the request id
-    the way its transfered in the email
-    '''
-    return LXBUS_REQ_PREFIX + requestid + LXBUS_REQ_SUFFIX
-    
-def extractRequestid(text):
-    '''
-    Given a string, extract a requestid, if present
-    '''
-    s = LXBUS_REQ_REGEX.search(text)
-    
-    logging.warning("regex=%s" % s)
-    
-    if s != None:
-        return s.group("requestid")
-    else:
-        return None 
-    
-    
     

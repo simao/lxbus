@@ -88,11 +88,6 @@ class LxbusMailHandler(InboundMailHandler):
         html_bodies = mail_message.bodies('text/html')
 
         for content_type, body in html_bodies:
-            requestid = lxbus.extractRequestid(body.decode())
-            
-            if requestid == None:
-                logging.warning("Could not extract request id. %s" % body.decode());
-            
-            lxbus.parseCarrisMail(stopcode, requestid, body.decode())
+            lxbus.parseCarrisMail(stopcode, body.decode())
 
 
