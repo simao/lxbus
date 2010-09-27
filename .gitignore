@@ -1,4 +1,6 @@
 .svn/*
 .project
 .pydevproject
+.DS_Store
+.DS_Store
 

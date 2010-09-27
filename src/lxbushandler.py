@@ -10,6 +10,8 @@ from google.appengine.ext import webapp
 import logging
 from google.appengine.ext.webapp.mail_handlers import InboundMailHandler 
 
+
+
 try:
     # This is where simplejson lives on App Engine
     from django.utils import simplejson
@@ -81,13 +83,14 @@ class LxbusRequestUpdateHandler(webapp.RequestHandler):
 
 class LxbusMailHandler(InboundMailHandler):
     def receive(self, mail_message):
-        logging.info("Received a message from: " + mail_message.sender)
+        logging.debug("Received a message from: " + mail_message.sender)
         
-        stopcode = mail_message.subject.replace(lxbus.CARRIS_SUBJECT_SPEC,'')
+        stopcode = lxbus.CARRIS_SUBJECT_REGEX.search(mail_message.subject).group("stopcode")
         
         html_bodies = mail_message.bodies('text/html')
 
         for content_type, body in html_bodies:
+            logging.debug("Parsing text: %s" % body.decode())
             lxbus.parseCarrisMail(stopcode, body.decode())
 
 

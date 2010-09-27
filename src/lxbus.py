@@ -9,15 +9,19 @@ from busrequest import BusRequest
 
 from google.appengine.api import mail
 
+from BeautifulSoup import BeautifulSoup
+
 import logging
 import re
 import hashlib
 import random
 import time
 
-APP_MAIL = "carris@lxbus.appspotmail.com"
-CARRIS_MAIL = "simao.m@gmail.com"
+APP_MAIL = "carris@lxbusinfo.appspotmail.com"
+CARRIS_MAIL = "sms@carris.pt"
 CARRIS_SUBJECT_SPEC = "C "
+
+CARRIS_SUBJECT_REGEX = re.compile( r">C (?P<stopcode>\w+)<" )  
 
 '''
 Regular expression used to parse received bus info
@@ -31,22 +35,22 @@ def parseCarrisMail(stopcode, mailbody):
     Given a mail body received in an email from carris,
     search in the html for bus information
     '''
-    pattern = re.compile(CARRIS_REGEX, re.UNICODE)
-    matches = pattern.finditer(mailbody)
-    
     # Delete all previous information about this stopcode
     for b in BusInfo.all().filter("stopcode = ", stopcode):
         b.delete()
     
-    
     res = []
-        
-    for item in matches:
-        busnr = int(item.group(1))
-        dest = item.group(2)
-        pt_timestamp = item.group(3)
-        eta_minutes = int(item.group(4).replace('m',''))
 
+    soup = BeautifulSoup(mailbody)
+
+    for tag in soup.find('div',id='RESULT_LAYER').findAll('tr')[1:]:
+        ths = tag.findAll('th')
+        
+        busnr = int(ths[0].contents[0].strip())
+        dest = ths[1].contents[0].strip()
+        pt_timestamp = ths[2].contents[0].strip()
+        eta_minutes = int(ths[3].contents[0].strip().rstrip('m'))
+        
         newbus = BusInfo(stopcode=stopcode,
                          busNumber=busnr,
                          pt_timestamp=pt_timestamp,
@@ -56,7 +60,8 @@ def parseCarrisMail(stopcode, mailbody):
         newbus.put()
         
         res.append(newbus)
-            
+        
+
     return res
 
 def getNewBus(stopcode):

@@ -6,16 +6,20 @@ Created on Sep 20, 2010
 import os
 import sys
 
-from lxbushandler import *
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 
+sys.path.append(os.path.join(os.path.dirname(__file__), 'third_party'))
+
+import lxbushandler
+
+
 def main():
     application = webapp.WSGIApplication([
-      ('/newBusRequest', LxbusRequestNewHandler),
-      ('/updateBusRequest', LxbusRequestUpdateHandler),
-      LxbusMailHandler.mapping()
+      ('/newBusRequest', lxbushandler.LxbusRequestNewHandler),
+      ('/updateBusRequest', lxbushandler.LxbusRequestUpdateHandler),
+      lxbushandler.LxbusMailHandler.mapping()
     ], debug=True)
     util.run_wsgi_app(application)
 
