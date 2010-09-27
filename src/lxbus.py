@@ -35,7 +35,8 @@ def parseCarrisMail(stopcode, mailbody):
     Given a mail body received in an email from carris,
     search in the html for bus information
     '''
-    # Delete all previous information about this stopcode
+    # Delete all previous information about this stopcode, 
+    # this one is 'freshier'
     for b in BusInfo.all().filter("stopcode = ", stopcode):
         b.delete()
     
@@ -43,6 +44,7 @@ def parseCarrisMail(stopcode, mailbody):
 
     soup = BeautifulSoup(mailbody)
 
+    # Iterate over all the rows starting in the 2nd one (1:)
     for tag in soup.find('div',id='RESULT_LAYER').findAll('tr')[1:]:
         ths = tag.findAll('th')
         

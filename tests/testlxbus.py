@@ -7,25 +7,10 @@ Created on Sep 21, 2010
 '''
 import unittest
 
-from BeautifulSoup import BeautifulSoup
-
 import lxbus
-import re
-import codecs
 
 class Test(unittest.TestCase):
     
-    
-    def testParsingWithBS(self):
-        
-        f = codecs.open("test.html", "r", "utf-8")
-        
-        textstr = f.read()
-        
-        soup = BeautifulSoup(textstr)
-        
-        print soup.prettify()
-                     
     
     def testCarrisSubjectRegex(self):
         textstr = u" 2010-09-25 18:10 >C 10503<"
