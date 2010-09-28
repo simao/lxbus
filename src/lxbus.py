@@ -5,11 +5,10 @@ Created on Sep 20, 2010
 '''
 
 from businfo import BusInfo
-from busrequest import BusRequest
-
+from busrequest import *
 from google.appengine.api import mail
-
 from BeautifulSoup import BeautifulSoup
+from datetime import datetime
 
 import logging
 import re
@@ -22,13 +21,6 @@ CARRIS_MAIL = "sms@carris.pt"
 CARRIS_SUBJECT_SPEC = "C "
 
 CARRIS_SUBJECT_REGEX = re.compile( r">C (?P<stopcode>\w+)<" )  
-
-'''
-Regular expression used to parse received bus info
-
-Should change this to use beatifull soap
-'''
-CARRIS_REGEX=r'<th>(\d+)</th><th>([\s\w\.\-]+)</th><th>(\d+:\d+)</th><th>(\d+m)</th>'
 
 def parseCarrisMail(stopcode, mailbody):
     '''
@@ -44,27 +36,45 @@ def parseCarrisMail(stopcode, mailbody):
 
     soup = BeautifulSoup(mailbody)
 
-    # Iterate over all the rows starting in the 2nd one (1:)
-    for tag in soup.find('div',id='RESULT_LAYER').findAll('tr')[1:]:
-        ths = tag.findAll('th')
+    # Check if the reply is a "No buses found"
+    notfoundb = soup.find('b', 'thINFO')
+
+    if notfoundb != None and notfoundb.contents[0] == "N&atilde;o foram encontrados Resultados.":
+        hasResults = BUSREQUEST_RETURNED_WO_RESULTS
+    else:
+        hasResults = BUSREQUEST_RETURNED_W_RESULTS
+
+    # Update all requests for this stop
+    requests = BusRequest.all().filter("stopcode = ", stopcode)
         
-        busnr = int(ths[0].contents[0].strip())
-        dest = ths[1].contents[0].strip()
-        pt_timestamp = ths[2].contents[0].strip()
-        eta_minutes = int(ths[3].contents[0].strip().rstrip('m'))
-        
-        newbus = BusInfo(stopcode=stopcode,
-                         busNumber=busnr,
-                         pt_timestamp=pt_timestamp,
-                         eta_minutes=eta_minutes,
-                         dest=dest)
-        
-        newbus.put()
-        
-        res.append(newbus)
+    for r in requests:
+        r.status_code = hasResults
+        r.put()
+
+    # If we received results, write them to db
+    if hasResults == BUSREQUEST_RETURNED_W_RESULTS:
+        # Iterate over all the rows starting in the 2nd one (1:)
+        for tag in soup.find('div',id='RESULT_LAYER').findAll('tr')[1:]:
+            ths = tag.findAll('th')
+            
+            busnr = int(ths[0].contents[0].strip())
+            dest = ths[1].contents[0].strip()
+            pt_timestamp = ths[2].contents[0].strip()
+            eta_minutes = int(ths[3].contents[0].strip().rstrip('m'))
+            
+            newbus = BusInfo(stopcode=stopcode,
+                             busNumber=busnr,
+                             pt_timestamp=pt_timestamp,
+                             eta_minutes=eta_minutes,
+                             dest=dest)
+            
+            newbus.put()
+            
+            res.append(newbus)
         
 
     return res
+
 
 def getNewBus(stopcode):
     '''
@@ -78,7 +88,7 @@ def getNewBus(stopcode):
     
     requestid = genRequestId(stopcode)
     
-    nrequest = BusRequest(requestid=requestid)
+    nrequest = BusRequest(requestid=requestid, created_date=datetime.today(), stopcode=stopcode, status_code=BUSREQUEST_REQUESTED)
     
     nrequest.put()
     
@@ -92,18 +102,29 @@ def getNewBus(stopcode):
     
     return requestid
 
-
-def getUpdateBus(stopcode, requestid):
+def isRequestReturned(requestid):
+    '''
+    Returns true iif we received information from carris regarding the stopcode
+    in the request identified by requestid
+    '''
+    res = BusRequest.all().filter("requestid = ", requestid).get()
+    
+    if res == None:
+        return False
+    else:
+        return res.isRequestReturned()
+    
+def getRequest(requestid):
+    '''
+        Returns the request identified by requestid
+    '''
+    return BusRequest.all().filter("requestid = ", requestid).get()
+    
+def getUpdateBus(request):
     '''
     Checks the database to see if there's information about a specific bus stop
     '''
-    
-    request = BusRequest.all().filter("requestid = ", requestid).get()
-    
-    if(request == None):
-        return None
-    
-    entries = BusInfo.all().filter("stopcode = ", stopcode).filter("last_modified > ", request.last_modified)
+    entries = BusInfo.all().filter("stopcode = ", request.stopcode).filter("last_modified > ", request.created_date)
     
     return entries
 

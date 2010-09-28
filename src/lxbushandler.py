@@ -10,14 +10,14 @@ from google.appengine.ext import webapp
 import logging
 from google.appengine.ext.webapp.mail_handlers import InboundMailHandler 
 
-
-
 try:
-    # This is where simplejson lives on App Engine
     from django.utils import simplejson
 except (ImportError):
     import simplejson
 
+LXBUS_REPLY_NOBUSES = -1
+LXBUS_REPLY_UNKNOWN_RQ = -2
+LXBUS_REPLY_NOT_RETURNED = -3
 
 class LxbusRequestNewHandler(webapp.RequestHandler):
     '''
@@ -66,16 +66,41 @@ class LxbusRequestUpdateHandler(webapp.RequestHandler):
             self.response.out.write("Bad request. Check specs.")
             return False
         
-        entries = lxbus.getUpdateBus(stopcode, requestid)
+        request = lxbus.getRequest(requestid)
         
-        json = simplejson.dumps([{
-            "busnr" : bus.busNumber,
-            "eta_minutes": bus.eta_minutes,
-            "pt_timestamp" : bus.pt_timestamp,
-            "last_modified": bus.last_modified.isoformat()
-            } for bus in entries], sort_keys=True, indent=4) # Pretty print
+        errormsg = None
+        errorcode = 0
+        
+        if(request == None):
+            errormsg = "No such request."
+            errorcode = LXBUS_REPLY_NOBUSES
+        elif (request.isRequestReturned() == False):
+            errormsg = "Reply to stopcode %s not yet returned" % request.stopcode
+            errorcode = LXBUS_REPLY_NOT_RETURNED
+        elif (request.isRequestWithResults() == False):
+            errormsg = "No bus information for stop code %s" % request.stopcode
+            errorcode = LXBUS_REPLY_NOBUSES
+            
+        if (errormsg != None):
+            json = simplejson.dumps([{"statuscode" : errorcode, "message" : errormsg}])
+        else:
+            entries = lxbus.getUpdateBus(request)
+            
+            json = simplejson.dumps(
+                [{ "statuscode" : 0, "message" : "", "payload" :   
+                    [{
+                    "busnr" : bus.busNumber,
+                    "dest" : bus.dest,
+                    "eta_minutes": bus.eta_minutes,
+                    "pt_timestamp" : bus.pt_timestamp,
+                    "last_modified": bus.last_modified.isoformat()
+                } for bus in entries]  }], sort_keys=False, indent=4) # Pretty print
 
-        self.response.set_status(202)
+        if(errormsg != None):
+            self.response.set_status(202)
+        else:
+            self.response.set_status(400)
+
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         self.response.out.write(json)
 
