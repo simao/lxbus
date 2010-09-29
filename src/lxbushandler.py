@@ -58,10 +58,9 @@ class LxbusRequestUpdateHandler(webapp.RequestHandler):
     '''
     def get(self):
 
-        stopcode = self.request.get("stopcode")
         requestid = self.request.get("requestid")
         
-        if (stopcode == "") or (requestid == ""):
+        if (requestid == ""):
             self.response.set_status(400)
             self.response.out.write("Bad request. Check specs.")
             return False
@@ -96,11 +95,7 @@ class LxbusRequestUpdateHandler(webapp.RequestHandler):
                     "last_modified": bus.last_modified.isoformat()
                 } for bus in entries]  }], sort_keys=False, indent=4) # Pretty print
 
-        if(errormsg != None):
-            self.response.set_status(202)
-        else:
-            self.response.set_status(400)
-
+        self.response.set_status(202)
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         self.response.out.write(json)
 

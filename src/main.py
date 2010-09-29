@@ -17,8 +17,8 @@ import lxbushandler
 
 def main():
     application = webapp.WSGIApplication([
-      ('/newBusRequest', lxbushandler.LxbusRequestNewHandler),
-      ('/updateBusRequest', lxbushandler.LxbusRequestUpdateHandler),
+      ('/api/newBusRequest', lxbushandler.LxbusRequestNewHandler),
+      ('/api/updateBusRequest', lxbushandler.LxbusRequestUpdateHandler),
       lxbushandler.LxbusMailHandler.mapping()
     ], debug=True)
     util.run_wsgi_app(application)

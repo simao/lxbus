@@ -28,7 +28,7 @@ def parseCarrisMail(stopcode, mailbody):
     search in the html for bus information
     '''
     # Delete all previous information about this stopcode, 
-    # this one is 'freshier'
+    # this one is fresher
     for b in BusInfo.all().filter("stopcode = ", stopcode):
         b.delete()
     
