@@ -23,7 +23,7 @@ class LxbusRequestNewHandler(webapp.RequestHandler):
     '''
     Send an email
     '''
-    def get(self):
+    def post(self):
         stopcode = self.request.get("stopcode")
         
         if stopcode == "":
@@ -83,7 +83,7 @@ class LxbusRequestUpdateHandler(webapp.RequestHandler):
         if (errormsg != None):
             json = simplejson.dumps([{"statuscode" : errorcode, "message" : errormsg}])
         else:
-            entries = lxbus.getUpdateBus(request)
+            entries = sorted(lxbus.getUpdateBus(request), key=lambda x: x.eta_minutes)
             
             json = simplejson.dumps(
                 [{ "statuscode" : 0, "message" : "", "payload" :   

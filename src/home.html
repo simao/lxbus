@@ -37,6 +37,8 @@
 			
 			div#waitdiv {
 				display: none;
+				margin-left: auto;
+				margin-right: auto;
 			}
             
             span.yellow {
@@ -62,6 +64,48 @@
                 color: #015666;
                 text-decoration: none
             }
+			
+			
+		/* Table design */
+
+        #resultstable {
+            font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+            font-size: 12px;
+            background: #efefef;
+            width: 480px;
+            border-collapse: collapse;
+            text-align: left;
+			
+			margin: auto;
+			
+			display: none;
+        }
+        
+        #resultstable th {
+            font-size: 14px;
+            font-weight: normal;
+            color: #1C4447;
+            padding: 10px 8px;
+            border-bottom: 2px solid #1C4447;
+        }
+        
+        #resultstable td {
+            border-bottom: 1px solid #A1B4B6;
+            color: #566C6E;
+            padding: 6px 8px;
+        }
+        
+        #resultstable tbody tr:hover td {
+            color: #1C4447;
+        }
+		
+        #footer {
+            position: absolute;
+			float:right;
+            bottom: 0;
+			width: 98%;
+        }
+		
         </style>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript">
         </script>
@@ -86,7 +130,6 @@
                     setTimeout(updateRequestResult, 5 * 1000,data.requestid); 
                 }
             };
-			
 			
             updateRequestResult = function(requestid){
                 $.ajax({
@@ -114,12 +157,28 @@
 									$("#inputdiv").show();
 								}
 								
-
                             } else {
 								
-								$("#resultsmainp").text(data[0].payload[0].dest)
+								newRows = "";
+								
+								for(i = 0; i < data[0].payload.length; i++)
+								{
+									o = data[0].payload[i]
+									newRows += 	"<tr>" +
+												"<td>" + o.busnr + "</td>" +
+												"<td>" + o.dest + "</td>" + 
+												"<td>" + o.eta_minutes + "</td>" +
+												"<td>" + o.pt_timestamp + "</td>" +
+												"</tr>";
+								}
+								
+								$('#resultstable tr:last').after(newRows);
+								
+								$("#resultsmainp").text(data[0].message);
 								
 								$("#resultsdiv").show();
+								
+								$("#resultstable").show();
                             }
                         } else {
                             // Try again in 5 seconds
@@ -132,6 +191,7 @@
 			
             putNewRequestFunc = function(stopcode){
                 $.ajax({
+					type : 'POST',
                     url: '/api/newBusRequest',
                     async: true,
                     ifModified: true,
@@ -152,40 +212,52 @@
 			
             $(document).ready(function(){
             
-                $('#gobutton').click(function(event){
+                $('#goform').submit(function(event){
 					
 					if($("#stopcode").val() == "")
+					{
 						alert("Please input a stop code")
-					else					
+					} else					
                 	{
 						putNewRequestFunc($("#stopcode").val())
-					}	
+					}
+					
+					event.preventDefault()
                 });
                 
             });
         </script>
     </head>
     <body>
+    	<img style="position: absolute; top: 0; right: 0; border: 0;" src="/img/ribbon.gif" alt="Beta" />
+		
         <div id="main">
             <h1 class="logo">LX<span class="yellow">Bus</span></h1>
 			
 			
             <div id="inputdiv">
+            	<form id="goform" action="#">
                 <input size="7" maxlength="7" type="text" name="stopcode" id="stopcode"/>
-				<input type="button" id="gobutton" value="GO!" size="3"/>
-                <p>
+				<input type="submit" id="gobutton" value="GO!" size="3"/>
+                </form>
+				<p>
                     Write the stop code to get bus information about that bus stop.
                 </p>
                 <p class="small">
                     Stop codes can be obtained at the <a href="http://www.carris.pt/pt/informacao-ao-passageiro/">carris website</a>
-                    or at the sign near the stop showing the buses that go through that stop. Usually this code starts with "C".
+                    or at the sign near the stop showing the buses that go through that stop. Usually this code is a number.
                 </p>
             </div>
 			
             <div id="resultsdiv">
                 <p id="resultsmainp">
-                    Results
                 </p>
+				
+				<table id="resultstable" summary="Bus Information Table">
+					<tr>
+						<th scope="col">Bus</th><th scope="col">Direction</th><th scope="col">Wait (m)</th><th scope="col">ETA</th>
+					</tr>
+				</table>				
             </div>
 			
             <div id="waitdiv">
@@ -195,9 +267,12 @@
                 </p>
             </div>
 			
-            <p class="small">
+        </div>
+		
+		<div id="footer">
+			<p class="small">
                 Developed by <a href="http://simaom.com/" target="_new">Simão Mata</a>.
             </p>
-        </div>
+		</div>
     </body>
 </html>
