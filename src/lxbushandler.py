@@ -18,6 +18,8 @@ except (ImportError):
 LXBUS_REPLY_NOBUSES = -1
 LXBUS_REPLY_UNKNOWN_RQ = -2
 LXBUS_REPLY_NOT_RETURNED = -3
+LXBUS_REPLY_INVALID_CODE = -4
+
 
 class LxbusRequestNewHandler(webapp.RequestHandler):
     '''
@@ -76,6 +78,9 @@ class LxbusRequestUpdateHandler(webapp.RequestHandler):
         elif (request.isRequestReturned() == False):
             errormsg = "Reply to stopcode %s not yet returned" % request.stopcode
             errorcode = LXBUS_REPLY_NOT_RETURNED
+        elif (request.isRequestInvalidCode()):
+            errormsg = "The provided code stop is invalid."
+            errorcode = LXBUS_REPLY_INVALID_CODE
         elif (request.isRequestWithResults() == False):
             errormsg = "No bus information for stop code %s" % request.stopcode
             errorcode = LXBUS_REPLY_NOBUSES
@@ -105,12 +110,18 @@ class LxbusMailHandler(InboundMailHandler):
     def receive(self, mail_message):
         logging.debug("Received a message from: " + mail_message.sender)
         
-        stopcode = lxbus.CARRIS_SUBJECT_REGEX.search(mail_message.subject).group("stopcode")
-        
-        html_bodies = mail_message.bodies('text/html')
+        m = lxbus.CARRIS_SUBJECT_REGEX.search(mail_message.subject)
 
-        for content_type, body in html_bodies:
-            logging.debug("Parsing text: %s" % body.decode())
-            lxbus.parseCarrisMail(stopcode, body.decode())
+        if(m != None):        
+            stopcode = m.group("stopcode")
+            
+            html_bodies = mail_message.bodies('text/html')
+    
+            for content_type, body in html_bodies:
+                logging.debug("Parsing text: %s" % body.decode())
+                lxbus.parseCarrisMail(stopcode, body.decode())
+        else:
+            logging.warning("Invalid subject received: %s" % mail_message.subject)
+        
 
 

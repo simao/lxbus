@@ -20,7 +20,7 @@ APP_MAIL = "carris@lxbusinfo.appspotmail.com"
 CARRIS_MAIL = "sms@carris.pt"
 CARRIS_SUBJECT_SPEC = "C "
 
-CARRIS_SUBJECT_REGEX = re.compile( r">C (?P<stopcode>\w+)<" )  
+CARRIS_SUBJECT_REGEX = re.compile( r">C (?P<stopcode>\w+)\.*<" )  
 
 def parseCarrisMail(stopcode, mailbody):
     '''
@@ -35,11 +35,15 @@ def parseCarrisMail(stopcode, mailbody):
     res = []
 
     soup = BeautifulSoup(mailbody)
-
+    
+    # If there's an error, just mark the stop code as invalid
+    invalidcodep = soup.find('p', 'error-title')
     # Check if the reply is a "No buses found"
     notfoundb = soup.find('b', 'thINFO')
 
-    if notfoundb != None and notfoundb.contents[0] == "N&atilde;o foram encontrados Resultados.":
+    if invalidcodep != None:
+        hasResults = BUSREQUEST_RETURNED_INVALID
+    elif notfoundb != None and notfoundb.contents[0] == "N&atilde;o foram encontrados Resultados.":
         hasResults = BUSREQUEST_RETURNED_WO_RESULTS
     else:
         hasResults = BUSREQUEST_RETURNED_W_RESULTS
