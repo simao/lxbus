@@ -1,0 +1,78 @@
+h1.logo {
+    font-family: 'Cantarell', sans-serif;
+    font-size: 7em;
+}
+
+p {
+    font-family: sans-serif;
+    font-size: 1.5em;
+}
+
+p.small {
+    font-size: 0.8em;
+}
+
+div#resultsdiv {
+    display: none;
+}
+
+div#waitdiv {
+    display: none;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+span.yellow {
+    color: #F5F373;
+}
+
+a:link {
+    color: #206876;
+    text-decoration: underline
+}
+
+a:visited {
+    color: #206876;
+    text-decoration: underline
+}
+
+a:active {
+    color: #04859D;
+    text-decoration: underline
+}
+
+a:hover {
+    color: #015666;
+    text-decoration: none
+}
+
+/* Table design */
+#resultstable {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+    font-size: 12px;
+    background: #efefef;
+    width: 90%;
+    border-collapse: collapse;
+    text-align: left;
+    margin-top: 0;
+    margin: auto;
+    display: none;
+}
+
+#resultstable th {
+    font-size: 14px;
+    font-weight: normal;
+    color: #1C4447;
+    padding: 10px 8px;
+    border-bottom: 2px solid #1C4447;
+}
+
+#resultstable td {
+    border-bottom: 1px solid #A1B4B6;
+    color: #566C6E;
+    padding: 6px 8px;
+}
+
+#resultstable tbody tr:hover td {
+    color: #1C4447;
+}

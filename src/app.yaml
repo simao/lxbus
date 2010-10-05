@@ -12,6 +12,8 @@ handlers:
   upload: home.html
 - url: /img
   static_dir: img 
+- url: /css
+  static_dir: css 
 - url: /_ah/mail/carris@lxbusinfo\.appspotmail\.com 
   script: main.py 
   login: admin
