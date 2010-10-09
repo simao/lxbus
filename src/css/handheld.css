@@ -1,19 +1,16 @@
 
 h1.logo {
     font-family: 'Cantarell', sans-serif;
-    font-size: 7em;
+    font-size: 5em;
 }
 
 img.betaribbon {
-	position: absolute; 
-	top: 0; 
-	right: 0;
-	border: 0;
+	display: none;
 }
+
 
 #container {
     margin: 0 auto;
-    width: 600px;
 }
 
 #header {
@@ -34,3 +31,4 @@ img.betaribbon {
     padding: 20px;
     height: 1%;
 }
+

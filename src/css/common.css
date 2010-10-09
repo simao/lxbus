@@ -1,11 +1,12 @@
-h1.logo {
-    font-family: 'Cantarell', sans-serif;
-    font-size: 7em;
-}
 
 p {
     font-family: sans-serif;
     font-size: 1.5em;
+}
+
+body {
+    background-color: #F0F0F0;
+    text-align: center;
 }
 
 p.small {
@@ -76,3 +77,4 @@ a:hover {
 #resultstable tbody tr:hover td {
     color: #1C4447;
 }
+

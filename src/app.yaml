@@ -10,6 +10,8 @@ handlers:
 - url: /
   static_files: home.html
   upload: home.html
+- url: /js
+  static_dir: js   
 - url: /img
   static_dir: img 
 - url: /css
