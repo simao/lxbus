@@ -106,6 +106,8 @@ $(document).ready(function(){
 	{
 		lxbus.db.open();
 		
+		$("#previousCodes").show();
+		
 		$("#previousCodes").html(lxbus.db.getAllCodesAsHTML());
 		
 		$("#previousCodes a").live("click", function(target) {
