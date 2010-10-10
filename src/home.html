@@ -8,9 +8,11 @@
         <link href='http://fonts.googleapis.com/css?family=Molengo|Cantarell' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="css/screen.css" media="only screen and (min-device-width:1024px)"/>
 		<link rel="stylesheet" href="css/handheld.css" media="only screen and (max-device-width:480px)"/>
+		<link rel="stylesheet" href="css/handheld.css" media="only handheld"/>
 		<link href="css/common.css" rel="stylesheet" type="text/css">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
         <script type="text/javascript" src="js/lxbus.js"></script>
+        <script type="text/javascript" src="js/storage.js"></script>
     </head>
     <body>
     	<img class="betaribbon" src="img/ribbon.gif" alt="Beta" />
@@ -27,6 +29,9 @@
 	                <input size="7" maxlength="7" type="text" name="stopcode" id="stopcode"/>
 					<input type="submit" id="gobutton" value="GO!" size="3"/>
 	                </form>
+					
+					<p class="medium" id="previousCodes"></p>
+					
 					<p>
 	                    Write the stop code to get bus information about that bus stop.
 	                </p>
@@ -58,7 +63,7 @@
 		
 			<div id="footer">
 				<p class="small">
-	                Developed by <a href="http://simaom.com/" target="_new">Simão Mata</a>. See more about it <a href="http://simaom.com/blog/?p=127">here.</a>
+	                Developed by <a href="http://simaom.com/" target="_new">Simão Mata</a>. Learn more about it <a href="http://simaom.com/blog/?p=127">here.</a>
 					Follow me at <a href="http://twitter.com/simaom">Twitter</a> or <a href="http://www.google.com/profiles/simao.m">Buzz</a>
 	            </p>
 			</div>

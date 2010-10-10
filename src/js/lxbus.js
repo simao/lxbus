@@ -93,11 +93,31 @@ putNewRequestFunc = function(stopcode){
 	})
 }
 
-// Prepares the DOM tp catch the form submission
+// Prepares the DOM to catch the form submission
 $(document).ready(function(){
+	
+	/* If we support localStorage, try to initialize
+	 * the corresponding line with previously used
+	 * stop codes.
+	 */
+	var support_storage = lxbus.supports_storage();
+	
+	if(support_storage)
+	{
+		lxbus.db.open();
+		
+		$("#previousCodes").html(lxbus.db.getAllCodesAsHTML());
+		
+		$("#previousCodes a").live("click", function(target) {
+			$("#stopcode").val($(this).text());
+			
+			$("#stopcode").submit();
+		})
+	}
+	
 
 	$('#goform').submit(function(event){
-
+		
 		if($("#stopcode").val() == "")
 		{
 			alert("Please input a stop code")
@@ -105,8 +125,12 @@ $(document).ready(function(){
 		{
 			putNewRequestFunc($("#stopcode").val())
 		}
+		
+		if(support_storage)
+		{
+			lxbus.db.addStopCode($("#stopcode").val());
+		}
 
 		event.preventDefault()
 	});
-
 });

@@ -13,6 +13,10 @@ p.small {
     font-size: 0.8em;
 }
 
+p.medium {
+	font-size: 1em;
+}
+
 div#resultsdiv {
     display: none;
 }

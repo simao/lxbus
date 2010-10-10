@@ -20,7 +20,7 @@ APP_MAIL = "carris@lxbusinfo.appspotmail.com"
 CARRIS_MAIL = "sms@carris.pt"
 CARRIS_SUBJECT_SPEC = "C "
 
-CARRIS_SUBJECT_REGEX = re.compile( r">C (?P<stopcode>\w+)\.*<" )  
+CARRIS_SUBJECT_REGEX = re.compile( r">C (?P<stopcode>.+)<" )  
 
 def parseCarrisMail(stopcode, mailbody):
     '''
@@ -35,6 +35,14 @@ def parseCarrisMail(stopcode, mailbody):
     res = []
 
     soup = BeautifulSoup(mailbody)
+    
+    # Era fixe tb procurar aqui a hora para depois mostrar a hora
+    # a hora a que recebemos os ultimos resultados. Mas depois onde e
+    # que isso se guardava?
+    #
+    # (mais Tarde)
+    # Eu tou a ser estupido. Porque os request tem um last_modified
+    # e quando retornamos o json podemos 
     
     # If there's an error, just mark the stop code as invalid
     invalidcodep = soup.find('p', 'error-title')
