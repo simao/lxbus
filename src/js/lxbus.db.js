@@ -11,11 +11,12 @@
  * The codes are stored using an array maintained as a FIFO queue,
  * since the maximum number of stored codes is given by LXBUS_MAX_CODES.
  * 
+ * This file should be included <b>after</b> lxbus.js.
+ * 
  * Currently tested on:
  * 	Firefox 3.6
  *  Chrome 6.0.472.63
  *  Android 2.2
- * 
  * 
  * @author Simão Mata <simao.m@gmail.com>
  */
@@ -23,11 +24,9 @@
 /**
  * Max number of stop codes to be stored.
  */
-var LXBUS_MAX_CODES = 10;
+var LXBUS_MAX_CODES = 5;
 
 var LXKEY = "LXBUS_STOPCODES";
-
-lxbus = {};
 
 lxbus.db = {};
 
@@ -107,7 +106,7 @@ lxbus.db.getAllCodesAsHTML = function() {
  * 
  * @return boolean
  */
-lxbus.supports_storage = function () {
+lxbus.db.supports_storage = function () {
 	try {
 		return 'localStorage' in window && window['localStorage'] !== null;
 	} catch (e) {
