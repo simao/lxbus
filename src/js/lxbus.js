@@ -19,10 +19,10 @@ var LXBUS_NOT_YET_RETURNED = -3;
  */
 var LXBUS_POLL_SECONDS = 5;
 
-lxbus = {};
+var lxbus = {};
 
 // Holds all the functions for this module
-lxbus.f = {}
+lxbus.f = {};
 
 // True if this browser supports localStorage
 // The value for this is defined at document.ready.

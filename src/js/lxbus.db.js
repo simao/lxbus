@@ -35,10 +35,11 @@ lxbus.db.values = null;
 lxbus.db.open = function(){
 	var v = localStorage.getItem(LXKEY);
 
-	if(v)
+	if (v) {
 		lxbus.db.values = JSON.parse(v);
-	else
+	} else {
 		lxbus.db.values = [];
+	}
 }
 
 lxbus.db.writeToStorage = function () {
@@ -93,7 +94,7 @@ lxbus.db.getAllCodesAsHTML = function() {
 	
 	for(i = lxbus.db.values.length-1; i >= 0; i--)
 	{
-		v = lxbus.db.values[i];
+		var v = lxbus.db.values[i];
 		
 		res += "<a href='#'>"+ v + "</a> ";
 	}

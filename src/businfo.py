@@ -11,7 +11,7 @@ class BusInfo(db.Model):
     classdocs
     '''
     stopcode = db.StringProperty(required=True)
-    busNumber = db.IntegerProperty(required=True)
+    busNumber = db.StringProperty(required=True)
     pt_timestamp = db.StringProperty(required=True)
     eta_minutes = db.IntegerProperty(required=True)
     last_modified = db.DateTimeProperty(auto_now=True)

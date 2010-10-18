@@ -36,14 +36,6 @@ def parseCarrisMail(stopcode, mailbody):
 
     soup = BeautifulSoup(mailbody)
     
-    # Era fixe tb procurar aqui a hora para depois mostrar a hora
-    # a hora a que recebemos os ultimos resultados. Mas depois onde e
-    # que isso se guardava?
-    #
-    # (mais Tarde)
-    # Eu tou a ser estupido. Porque os request tem um last_modified
-    # e quando retornamos o json podemos 
-    
     # If there's an error, just mark the stop code as invalid
     invalidcodep = soup.find('p', 'error-title')
     # Check if the reply is a "No buses found"
@@ -69,7 +61,7 @@ def parseCarrisMail(stopcode, mailbody):
         for tag in soup.find('div',id='RESULT_LAYER').findAll('tr')[1:]:
             ths = tag.findAll('th')
             
-            busnr = int(ths[0].contents[0].strip())
+            busnr = ths[0].contents[0].strip()
             dest = ths[1].contents[0].strip()
             pt_timestamp = ths[2].contents[0].strip()
             eta_minutes = int(ths[3].contents[0].strip().rstrip('m'))
