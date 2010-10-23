@@ -26,3 +26,8 @@ indexes:
   - name: status_code
   - name: stopcode
   - name: last_modified
+
+- kind: BusRequest
+  properties:
+  - name: stopcode
+  - name: last_modified

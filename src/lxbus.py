@@ -52,10 +52,13 @@ def parseCarrisMail(stopcode, mailbody):
     else:
         hasResults = BUSREQUEST_RETURNED_W_RESULTS
 
-    # Update all requests for this stop
+    # Update all requests for this stop that aren't older than REQUEST_TIMEOUT
+    # Note that all requests will be updated, even if they already received an update.
+    # This way, we'll provide freshier info.
     requests = BusRequest.all().\
-        filter("status_code = ", BUSREQUEST_REQUESTED).filter("stopcode = ", stopcode).\
-        filter("last_modified > ", datetime.now() - timedelta(seconds=REQUEST_TIMEOUT))
+        filter("last_modified > ", datetime.now() - timedelta(seconds=REQUEST_TIMEOUT)).\
+        filter("stopcode = ", stopcode)
+
         
     for r in requests:
         r.status_code = hasResults
