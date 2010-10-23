@@ -9,6 +9,7 @@ from busrequest import *
 from google.appengine.api import mail
 from BeautifulSoup import BeautifulSoup
 from datetime import datetime
+from datetime import timedelta
 
 import logging
 import re
@@ -16,11 +17,14 @@ import hashlib
 import random
 import time
 
+# This is not the timeout for the user interface, since we are only providing an API.
+# After REQUEST_TIMEOUT seconds, consider we couldn't get information for the stop
+REQUEST_TIMEOUT = 15 * 60
 APP_MAIL = "carris@lxbusinfo.appspotmail.com"
 CARRIS_MAIL = "sms@carris.pt"
 CARRIS_SUBJECT_SPEC = "C "
 
-CARRIS_SUBJECT_REGEX = re.compile( r">C (?P<stopcode>.+)<" )  
+CARRIS_SUBJECT_REGEX = re.compile( r">C (?P<stopcode>.+)<" )
 
 def parseCarrisMail(stopcode, mailbody):
     '''
@@ -49,7 +53,9 @@ def parseCarrisMail(stopcode, mailbody):
         hasResults = BUSREQUEST_RETURNED_W_RESULTS
 
     # Update all requests for this stop
-    requests = BusRequest.all().filter("stopcode = ", stopcode)
+    requests = BusRequest.all().\
+        filter("status_code = ", BUSREQUEST_REQUESTED).filter("stopcode = ", stopcode).\
+        filter("last_modified > ", datetime.now() - timedelta(seconds=REQUEST_TIMEOUT))
         
     for r in requests:
         r.status_code = hasResults
