@@ -68,7 +68,7 @@ lxbus.f.updateRequestResult = function(requestid){
         async: true,
         ifModified: true,
         data: {
-            requestid: requestid,
+            requestid: requestid
         },
         success: function(data, status, xhr){
             if ((typeof data != 'undefined') && (data[0].statuscode != LXBUS_NOT_YET_RETURNED)) {
@@ -152,7 +152,7 @@ lxbus.f.putNewRequestFunc = function(stopcode){
         async: true,
         ifModified: true,
         data: {
-            stopcode: stopcode,
+            stopcode: stopcode
         },
         success: function(data, status, xhr){
             if (typeof data != 'undefined') {
