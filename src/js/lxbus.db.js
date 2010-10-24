@@ -103,14 +103,13 @@ lxbus.db.getAllCodesAsHTML = function() {
 }
 
 /**
- * Function used to check if the browser supports local storage.
- * 
- * @return boolean
+ * Sets supports_storage to true or false depending on existing
+ * support for js localStorage.
  */
-lxbus.db.supports_storage = function () {
+lxbus.db.supports_storage = (function () {
 	try {
 		return 'localStorage' in window && window['localStorage'] !== null;
 	} catch (e) {
 		return false;
 	}
-}
+})();

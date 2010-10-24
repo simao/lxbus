@@ -188,9 +188,8 @@ $(document).ready(function(){
      * the corresponding line with previously used
      * stop codes.
      */
-	lxbus.support_storage = lxbus.db.supports_storage();
-    
-    if (lxbus.support_storage) {
+
+    if (lxbus.db.supports_storage) {
         lxbus.db.open();
         
         $("#previousCodes").show();
@@ -218,7 +217,7 @@ $(document).ready(function(){
         
             lxbus.f.putNewRequestFunc($("#stopcode").val());
             
-            if (lxbus.support_storage) {
+            if (lxbus.db.supports_storage) {
                 lxbus.db.addStopCode($("#stopcode").val());
             }
         }
