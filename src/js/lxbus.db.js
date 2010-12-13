@@ -53,7 +53,7 @@ lxbus.db.addStopCode = function (stopcode) {
 	if(lxbus.db.values.length >= LXBUS_MAX_CODES)
 		lxbus.db.values.splice(0, lxbus.db.values.length + 1 - LXBUS_MAX_CODES);
 
-	lxbus.db.delete(stopcode);
+	lxbus.db.delStop(stopcode);
 	 
 	lxbus.db.values.push(stopcode);
 
@@ -101,8 +101,7 @@ lxbus.db.getAllCodesAsHTML = function() {
  * 
  * @returns true if we removed an element, false otherwise.
  */
-lxbus.db.delete = function(stopcode)
-{
+lxbus.db.delStop = function(stopcode) {
   var i = lxbus.db.values.indexOf(stopcode); 
   if(i != -1)
   { 

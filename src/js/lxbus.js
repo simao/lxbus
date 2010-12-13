@@ -124,7 +124,10 @@ lxbus.f.receiveUpdateReply = function(data){
 
         // If this was an invalid stop code, remove it
         if(returncode == LXBUS_REPLY_INVALID_CODE) {
-            lxbus.db.delete(data[0].stopcode);
+          if(lxbus.db.supports_storage)
+          {
+            lxbus.db.delStop(data[0].stopcode);
+          }
         }
 
         // Just show the error msg we received
