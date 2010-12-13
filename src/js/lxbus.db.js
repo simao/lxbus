@@ -53,15 +53,8 @@ lxbus.db.addStopCode = function (stopcode) {
 	if(lxbus.db.values.length >= LXBUS_MAX_CODES)
 		lxbus.db.values.splice(0, lxbus.db.values.length + 1 - LXBUS_MAX_CODES);
 
-	// JS is great but sometimes its just stupid
-	// Why do I have explicitly iterate over the array
-	// to check if it contains the stop code? Meh.
-	// I could use JQuery's inArray, but I am trying to minimize
-	// JQuery usage here
-	for(i = 0; i < lxbus.db.values.length; i++)
-		if(lxbus.db.values[i] == stopcode)
-			lxbus.db.values.splice(i,1);
-
+	lxbus.db.delete(stopcode);
+	 
 	lxbus.db.values.push(stopcode);
 
 	lxbus.db.writeToStorage();
@@ -91,6 +84,7 @@ lxbus.db.getAllStopCodes = function(){
  */
 lxbus.db.getAllCodesAsHTML = function() {
 	var res = "";
+    var i;
 	
 	for(i = lxbus.db.values.length-1; i >= 0; i--)
 	{
@@ -103,13 +97,30 @@ lxbus.db.getAllCodesAsHTML = function() {
 }
 
 /**
+ * Deletes a stopcode from the db.
+ * 
+ * @returns true if we removed an element, false otherwise.
+ */
+lxbus.db.delete = function(stopcode)
+{
+  var i = lxbus.db.values.indexOf(stopcode); 
+  if(i != -1)
+  { 
+    lxbus.db.values.splice(i,1);
+    lxbus.db.writeToStorage();
+  }
+
+   return i != -1;
+}
+
+/**
  * Sets supports_storage to true or false depending on existing
  * support for js localStorage.
  */
 lxbus.db.supports_storage = (function () {
-	try {
-		return 'localStorage' in window && window['localStorage'] !== null;
-	} catch (e) {
-		return false;
-	}
+    try {
+        return 'localStorage' in window && window['localStorage'] !== null;
+    } catch (e) {
+        return false;
+    }
 })();

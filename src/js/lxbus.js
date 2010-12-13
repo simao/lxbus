@@ -4,13 +4,13 @@
  * Holds code for the document.ready() event and for various tasks
  * executed by the application.
  *
- *
  * @author Simão Mata <simao.m@gmail.com>
  */
 var LXBUS_OK_CODE = 0;
 var LXBUS_NO_BUSES = -1;
 var LXBUS_NO_INFO_RETURNED = -2;
 var LXBUS_NOT_YET_RETURNED = -3;
+var LXBUS_REPLY_INVALID_CODE = -4;
 
 /**
  * Number of seconds between polls to the server.
@@ -18,6 +18,16 @@ var LXBUS_NOT_YET_RETURNED = -3;
  * Should be at least 5 seconds.
  */
 var LXBUS_POLL_SECONDS = 5;
+
+/**
+ * Max number of poll tries before giving up. 
+ */
+var LXBUS_MAX_POLL_TRIES = 24; // Thats 24 * 5 = 120 seconds 
+
+/**
+ * Message to show if we couldn't receive a reply from carris
+ */
+var LXBUS_POLL_TIMEOUT_ERROR_MSG = "Could not get a response from Carris. Maybe you should try again?" 
 
 var lxbus = {};
 
@@ -28,14 +38,19 @@ lxbus.f = {};
 // The value for this is defined at document.ready.
 lxbus.support_storage = null;
 
+// Number of tries already made
+lxbus.nr_tries = 0;
 
 /**
  * Changes the interface to Waiting Mode while
  * we poll the server.
  */
 lxbus.f.showWaitUI = function () {
+  
+  $("#resultstable tbody").html("");
+  
 		$("#resultsdiv").hide();
-        $("#helpdiv").hide();
+    $("#helpdiv").hide();
 		
 		$("#inputdiv").hide();
 		$("#waitdiv").show();
@@ -63,6 +78,9 @@ lxbus.f.showResultsUI = function () {
  * @param {Object} requestid
  */
 lxbus.f.updateRequestResult = function(requestid){
+  
+    lxbus.nr_tries = lxbus.nr_tries + 1;
+  
     $.ajax({
         url: '/api/updateBusRequest',
         async: true,
@@ -76,8 +94,14 @@ lxbus.f.updateRequestResult = function(requestid){
                 lxbus.f.receiveUpdateReply(data);
                 
             } else {
-                // Try again in 5 seconds
-                setTimeout(lxbus.f.updateRequestResult, LXBUS_POLL_SECONDS * 1000, requestid);
+                if(lxbus.nr_tries < LXBUS_MAX_POLL_TRIES) {
+                    // Try again in 5 seconds
+                    setTimeout(lxbus.f.updateRequestResult, LXBUS_POLL_SECONDS * 1000, requestid);
+                } else {
+                  $("#resultsmainp").text(LXBUS_POLL_TIMEOUT_ERROR_MSG);
+                  
+                  lxbus.f.showResultsUI();
+                }
             }
         }
     })
@@ -97,9 +121,15 @@ lxbus.f.receiveUpdateReply = function(data){
     var returncode = data[0].statuscode
     
     if (returncode < LXBUS_OK_CODE) {
+
+        // If this was an invalid stop code, remove it
+        if(returncode == LXBUS_REPLY_INVALID_CODE) {
+            lxbus.db.delete(data[0].stopcode);
+        }
+
         // Just show the error msg we received
         $("#resultsmainp").text(data[0].message);
-        
+
     } else {
         // Prepare table header and
         // Fill table with information

@@ -85,13 +85,16 @@ class LxbusRequestUpdateHandler(webapp.RequestHandler):
             errormsg = "No bus information for stop code %s" % request.stopcode
             errorcode = LXBUS_REPLY_NOBUSES
             
+        stopcode = request.stopcode if request is not None else None
+            
         if (errormsg != None):
-            json = simplejson.dumps([{"statuscode" : errorcode, "message" : errormsg}])
+            
+            json = simplejson.dumps([{"statuscode" : errorcode, "message" : errormsg, "stopcode" : stopcode}])
         else:
             entries = sorted(lxbus.getUpdateBus(request), key=lambda x: x.eta_minutes)
             
             json = simplejson.dumps(
-                [{ "statuscode" : 0, "message" : "", "payload" :   
+                [{ "statuscode" : 0, "stopcode" : stopcode,  "message" : "", "payload" :   
                     [{
                     "busnr" : bus.busNumber,
                     "dest" : bus.dest,
