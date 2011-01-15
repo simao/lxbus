@@ -1,3 +1,18 @@
+/*
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /**
  * General lxbus library.
  *
@@ -34,10 +49,6 @@ var lxbus = {};
 // Holds all the functions for this module
 lxbus.f = {};
 
-// True if this browser supports localStorage
-// The value for this is defined at document.ready.
-lxbus.support_storage = null;
-
 // Number of tries already made
 lxbus.nr_tries = 0;
 
@@ -62,7 +73,7 @@ lxbus.f.showWaitUI = function () {
  */
 lxbus.f.showResultsUI = function () {
 		
-		if(lxbus.support_storage)
+		if(lxbus.db.supports_storage)
 			$("#previousCodes").html(lxbus.db.getAllCodesAsHTML());
 	
 	    $("#waitdiv").hide();
@@ -214,47 +225,39 @@ lxbus.f.receivePutReply = function(data){
 };
 
 
-// Prepares the DOM to catch the form submission
-$(document).ready(function(){
-
-    /* If we support localStorage, try to initialize
-     * the corresponding line with previously used
-     * stop codes.
-     */
-
+/**
+ * This function os meant to be called once, on a $(document).ready()
+ */
+lxbus.f.setUp = function () {
     if (lxbus.db.supports_storage) {
         lxbus.db.open();
-        
+
         $("#previousCodes").show();
-        
         $("#previousCodes").html(lxbus.db.getAllCodesAsHTML());
-        
-        $("#previousCodes a").live("click", function(event){
-        
+
+        $("#previousCodes a").live("click", function(event) {
             event.preventDefault();
-            
+
             $("#stopcode").val($(this).text());
-            
             $("#stopcode").submit();
         })
     }
-    
-    
-    $('#goform').submit(function(event){
-    
+
+
+    $('#goform').submit(function(event) {
+        event.preventDefault()
+
         if ($("#stopcode").val() == "") {
             alert("Please input a stop code")
         } else {
-			
-			lxbus.f.showWaitUI();
-        
+            lxbus.f.showWaitUI();
             lxbus.f.putNewRequestFunc($("#stopcode").val());
-            
+
             if (lxbus.db.supports_storage) {
                 lxbus.db.addStopCode($("#stopcode").val());
             }
         }
-        
-        event.preventDefault()
     });
-});
+};
+
+

@@ -1,4 +1,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -17,18 +32,9 @@
     <script type="text/javascript" src="js/lxbus.db.js">
     </script>
     <script type="text/javascript">
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-19224352-1']);
-        _gaq.push(['_trackPageview']);
-        
-        (function(){
-            var ga = document.createElement('script');
-            ga.type = 'text/javascript';
-            ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(ga, s);
-        })();
+      $(document).ready(function(){
+        lxbus.f.setUp();
+      });
     </script>
 </head>
     <body>
@@ -80,11 +86,24 @@
 		
 			<div id="footer">
 				<p class="small">
-	                Developed by <a href="http://simaom.com/" target="_new">Simão Mata</a>. Learn more about it <a href="http://simaom.com/blog/?p=127">here.</a>
-					Follow me at <a href="http://twitter.com/simaom">Twitter</a> or <a href="http://www.google.com/profiles/simao.m">Buzz</a>
+	                Developed by <a href="http://simaomata.com/" target="_new">Simão Mata</a>. Learn more about it <a href="http://simaomata.com/blog/?p=127">here.</a>
+					Follow me on <a href="http://twitter.com/simaom">Twitter</a> or <a href="http://www.google.com/profiles/simao.m">Buzz</a>
 	            </p>
 			</div>
 		</div>
-		
     </body>
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-19224352-1']);
+        _gaq.push(['_trackPageview']);
+        
+        (function(){
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
 </html>
