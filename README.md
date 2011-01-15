@@ -11,7 +11,7 @@ nice desktop and handheld interfaces.
 
 # Public Working Instance #
 
-I have a working instance working at Google ap engine
+I have a working instance working at Google App Engine
 (<http://lxbusinfo.appspot.com>). You can try it there using your
 browser in a mobile or desktop device.
 
