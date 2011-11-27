@@ -42,7 +42,7 @@ var LXBUS_MAX_POLL_TRIES = 24; // Thats 24 * 5 = 120 seconds
 /**
  * Message to show if we couldn't receive a reply from carris
  */
-var LXBUS_POLL_TIMEOUT_ERROR_MSG = "Could not get a response from Carris. Maybe you should try again?" 
+var LXBUS_POLL_TIMEOUT_ERROR_MSG = "Could not get a response from Carris. Maybe you should try again?";
 
 var lxbus = {};
 
@@ -72,7 +72,6 @@ lxbus.f.showWaitUI = function () {
  * we receive information from the server.
  */
 lxbus.f.showResultsUI = function () {
-		
 		if(lxbus.db.supports_storage)
 			$("#previousCodes").html(lxbus.db.getAllCodesAsHTML());
 	
@@ -132,7 +131,6 @@ lxbus.f.receiveUpdateReply = function(data){
     var returncode = data[0].statuscode
     
     if (returncode < LXBUS_OK_CODE) {
-
         // If this was an invalid stop code, remove it
         if(returncode == LXBUS_REPLY_INVALID_CODE) {
           if(lxbus.db.supports_storage)

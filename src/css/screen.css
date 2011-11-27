@@ -4,13 +4,6 @@ h1.logo {
     font-size: 7em;
 }
 
-img.betaribbon {
-	position: absolute; 
-	top: 0; 
-	right: 0;
-	border: 0;
-}
-
 #container {
     margin: 0 auto;
     width: 600px;

@@ -1,4 +1,4 @@
-'''
+"""
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
 
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 __author__ = "Simao Mata"
 
@@ -26,7 +26,9 @@ class BusRequest(db.Model):
     requestid = db.StringProperty(required=True)
     created_date = db.DateTimeProperty(required=True)
     stopcode = db.StringProperty(required=True)
-    status_code = db.StringProperty(required=True, choices=set([BUSREQUEST_RETURNED_INVALID, BUSREQUEST_REQUESTED, BUSREQUEST_RETURNED_W_RESULTS, BUSREQUEST_RETURNED_WO_RESULTS]))
+    status_code = db.StringProperty(required=True, choices={BUSREQUEST_RETURNED_INVALID, BUSREQUEST_REQUESTED,
+                                                            BUSREQUEST_RETURNED_W_RESULTS,
+                                                            BUSREQUEST_RETURNED_WO_RESULTS})
     last_modified = db.DateTimeProperty(auto_now=True)
 
     def isRequestReturned(self):

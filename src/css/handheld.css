@@ -4,11 +4,6 @@ h1.logo {
     font-size: 5em;
 }
 
-img.betaribbon {
-	display: none;
-}
-
-
 #container {
     margin: 0 auto;
 }
